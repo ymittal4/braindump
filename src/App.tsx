@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BlogPage from './Pages/BlogPage'
 import HomePage from './Pages/HomePage';
 import ThemeContext from './context/ThemeContext';
-import animatedText from './Components/introAnimation';
+import animatedText from './Components/AnimatedText';
 
 
 function App() {

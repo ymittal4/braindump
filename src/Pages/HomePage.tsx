@@ -1,13 +1,20 @@
-import animatedText from "../Components/introAnimation";
-import BookData from "../Components/TaoQuotes";
+import AnimatedText from "../Components/AnimatedText";
+import BookData from "../Components/BookData";
+import CurrentMedia from "../Components/CurrentMedia";
 
 const HomePage = () => {
     return (
         <div> 
-            <div> {animatedText()} </div>
+            <div> 
+                <AnimatedText />
+            </div>
             <br></br>
             <div>
-                {BookData()}
+                <CurrentMedia />
+            </div>
+            <br></br>
+            <div>
+                <BookData />
             </div>
         </div>
        

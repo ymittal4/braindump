@@ -11,7 +11,7 @@ const AnimatedText = () => {
     const [count, setCount] = useState(0)
 
     const randomTexts = [
-        'Welcome to my experience as a human', 
+        'Braindump for the media & places I experience', 
         'does this work',
         'yolo tolotolo',
         'pls work'
@@ -26,13 +26,15 @@ const AnimatedText = () => {
           });
     },[count]);
 
+
+    //const to store how many underscores for initial animation
     const initValue = randomTexts[0].length
 
     return (
         <div>
-            <h1 ref={ref}> {"_".repeat(initValue)}</h1>
+            <div ref={ref} className="text-3xl flex justify-between pt-8 pb-8"> {"_".repeat(initValue)}</div>
             <button onClick={() => 
-                setCount(count + 1)}> Click to see my favorite media
+                setCount(count + 1)}> Click to see my favorite experiences yet
             </button>
         </div>
     )
