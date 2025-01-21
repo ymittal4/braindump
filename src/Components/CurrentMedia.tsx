@@ -1,4 +1,6 @@
 
+import SpotifyData from "./SpotifyData"
+
 const CurrentMedia = () => {
     
     return (
@@ -12,6 +14,7 @@ const CurrentMedia = () => {
                 </div>
                 <div>
                     Spotify API here
+                    <SpotifyData />
                 </div>
             </div>
         </div>

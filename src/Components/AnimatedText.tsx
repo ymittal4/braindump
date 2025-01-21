@@ -18,7 +18,7 @@ const AnimatedText = () => {
     ]
 
     useEffect(() => {
-        console.log('effect running')
+        // console.log('effect running')
         gsap.to(ref.current, {
             duration: 1,
             text: randomTexts[count % randomTexts.length],

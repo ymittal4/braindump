@@ -1,43 +1,24 @@
 import { useEffect, useState } from "react";
+import { data } from "react-router-dom";
 
 type songProps = {
-    name: string;
-    artist: string;
-    time: string;
-}
-
-const clientId = "4b0a4da689864d42b090c255fd3f1caf"
-const code = undefined
-
-//get access token from spotify
-async function getAccessToken(clientId: string, clientSecret: string): Promise<string> {
-    const params = new URLSearchParams();
-    params.append("grant_type", "client_credentials");
-
-    const auth = btoa(`${clientId}:${clientSecret}`);
-
-    const result = await fetch("https://accounts.spotify.com/api/token", {
-        method: "POST",
-        headers: { 
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": `Basic ${auth}`
-        },
-        body: params
-    });
-
-    const { access_token } = await result.json();
-    return access_token;
-}
-
-//get current song from spotify
-async function getCurrentSong(access_token:string): Promise<songProps> {
-    const result = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
-        method: "GET", headers: { Authorization: `Bearer ${access_token}` }
-    });
-    return await result.json();
+    items: Array<{
+        track: {
+            name: string;
+            artists: Array<{ name: string }>;
+            duration_ms: number;
+            album: {images: Array<{ 
+                url: string, 
+                height: number, 
+                width: number}>}
+        };
+        played_at: string;  // When the track was played
+    }>;
 }
 
 const SpotifyData = () => {
+
+    console.log("spotufy data component")
 
     //states
     const [songdata, setSongdata] = useState<songProps | null>(null);
@@ -46,13 +27,25 @@ const SpotifyData = () => {
     const [error, setError] = useState<string | null>(null);
 
 
-    //runnning the function and getting data
+    //runnning functions > getting data from API > setting states according to data
     useEffect(() => {
-
-        //make api call here
-        //if data exists, setSongdata to data from api call, setLoading to false, setNosong to false
-        //if data does not exist, setSongdata to null, setLoading to false, setNosong to true
-        //
+        async function fetchSongData() {
+            try {
+                const response = await fetch('http://localhost:3001/api/now-playing');
+                const data = await response.json();
+                console.log('track data is', data.items[0].track);
+                // console.log ('received data', data)
+                if (data) {setNosong(false);} //if valid data is returned
+                setSongdata(data);
+            } catch(error) {
+                console.error('error fetching api data', error);
+            } finally {
+                setLoading(false)
+            }
+        }
+    
+        fetchSongData()
+        
     },[])
 
 
@@ -70,9 +63,12 @@ const SpotifyData = () => {
 
     return (
         <div> 
-            <div>{songdata?.name}</div>
-            <div>{songdata?.artist}</div>
-            <div>{songdata?.time}</div>
+            <div>{songdata?.items[0].track.name}</div>
+            <div>{songdata?.items[0].track.artists[0].name}</div>
+            <div>{songdata?.items[0].played_at}</div>
+            <img src = {songdata?.items[0].track.album.images[0].url}></img>
+            {/* <div>{songdata?.item.artist}</div> */}
+            {/* <div>{songdata?.time}</div> */}
         </div>
     )
 }
