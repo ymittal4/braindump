@@ -4,8 +4,8 @@ export const config = {
     runtime: 'edge'
 };
 
-const clientId = "4b0a4da689864d42b090c255fd3f1caf";
-const clientSecret = "7cc9cb5da80d493aa8b95cddcb27e4eb";
+const clientId = process.env.clientId;
+const clientSecret = process.env.clientSecret;
 const redirect_uri = 'http://localhost:3000/api/callback';
 
 export default async function handler(request: Request) {

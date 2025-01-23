@@ -2,6 +2,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
+//command to run server - npx ts-node -P tsconfig.server.json server.ts
+
 // Load environment variables
 dotenv.config();
 

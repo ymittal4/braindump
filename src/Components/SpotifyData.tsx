@@ -6,7 +6,6 @@ type songProps = {
         track: {
             name: string;
             artists: Array<{ name: string }>;
-            duration_ms: number;
             album: {images: Array<{ 
                 url: string, 
                 height: number, 
@@ -48,6 +47,24 @@ const SpotifyData = () => {
         
     },[])
 
+    function changeTimeToPST() {
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+        if (songdata) {
+            const currentDate = songdata?.items[0].played_at;
+            const dateObject = new Date(currentDate)
+            const songMonth = monthNames[dateObject.getMonth()]
+            const songDay = dateObject.getDate()
+            const songTime = dateObject.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour12: true, hour: 'numeric', minute: 'numeric' })
+            const newDate = (songMonth + " " + songDay + "," + " " + songTime)
+            return  newDate
+        }
+        else {
+            return null
+        }
+    }
+
 
     //conditional renders
     if (loading) {
@@ -63,12 +80,20 @@ const SpotifyData = () => {
 
     return (
         <div> 
-            <div>{songdata?.items[0].track.name}</div>
-            <div>{songdata?.items[0].track.artists[0].name}</div>
-            <div>{songdata?.items[0].played_at}</div>
-            <img src = {songdata?.items[0].track.album.images[0].url}></img>
-            {/* <div>{songdata?.item.artist}</div> */}
-            {/* <div>{songdata?.time}</div> */}
+            <div className="flex gap-4 border p-2">
+                <div>
+                    <img src = {songdata?.items[0].track.album.images[0].url} width="50" height="50"></img>
+                </div>
+                <div>
+                    <div>{songdata?.items[0].track.name}</div>
+                    <div>{songdata?.items[0].track.artists[0].name}</div>
+                </div>
+            </div>
+            <div className="border p-2">
+                <div> Last played on {changeTimeToPST()} </div>
+
+                
+            </div>
         </div>
     )
 }

@@ -6,15 +6,17 @@ const CurrentMedia = () => {
     return (
         <div>
             <div>
-                Currently experiencing:
+                Currently:
             </div>
-            <div className="">
+            <div className="flex gap-8 pt-10">
                 <div>
-                    Music
+                    <SpotifyData />
                 </div>
                 <div>
-                    Spotify API here
-                    <SpotifyData />
+                    Reading here
+                </div>
+                <div>
+                    watching here
                 </div>
             </div>
         </div>
