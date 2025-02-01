@@ -9,6 +9,9 @@ const HomePage = () => {
                 <AnimatedText />
             </div>
             <br></br>
+            <div className="py-2 font-mono text-xs">/ CURRENTLY</div>
+            <hr className="w-full border-[#E3E3E3]" />
+            <br></br>
             <div>
                 <CurrentMedia />
             </div>

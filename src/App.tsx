@@ -9,14 +9,13 @@ import animatedText from './Components/AnimatedText';
 
 function App() {
 
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false);
 
     return (
       <ThemeContext.Provider value={{ isDark, setIsDark }}> 
         <BrowserRouter>
-            {/* <div className={`flex min-h-screen justify-center font-mono ${isDark ? 'bg-neutral-800 text-white' : 'bg-neutral-100 text-black'} transition-colors duration-300`}> */}
-            <div className={`flex min-h-screen justify-center font-mono ${isDark ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-black'} transition-colors duration-300 `}>
-              <div className='w-full max-w-4xl px-4'>
+            <div className={`flex min-h-screen justify-center font-inter ${isDark ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-black'} transition-colors duration-300 `}>
+              <div className='w-full max-w-6xl px-4'>
                 <Navbar />
                   <Routes>
                     <Route path='/' element={<HomePage />} />

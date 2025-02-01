@@ -7,7 +7,7 @@ type ButtonProps = {
 }
 
 const Button = ({text, to}: ButtonProps) => {
-    const buttonClass = 'text-sm border-2 py-1 px-3 rounded-lg border-gray-700';
+    const buttonClass = 'text-xs tracking-wide py-1 px-2 bg-gray-200';
 
     return to? (
         <Link to={to} className={buttonClass}>

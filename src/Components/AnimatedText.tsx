@@ -32,9 +32,9 @@ const AnimatedText = () => {
 
     return (
         <div>
-            <div ref={ref} className="text-3xl flex justify-between pt-8 pb-8"> {"_".repeat(initValue)}</div>
+            <div ref={ref} className="text-5xl font-semibold tracking-tight flex justify-between pt-8 pb-8"> {"_".repeat(initValue)}</div>
             <button onClick={() => 
-                setCount(count + 1)}> Click to see my favorite experiences yet
+                setCount(count + 1)}> Click me to learn about Yash
             </button>
         </div>
     )
