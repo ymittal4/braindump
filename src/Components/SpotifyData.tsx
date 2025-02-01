@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { data } from "react-router-dom";
+import useHover from "../hooks/hoverHook";
 
 type songProps = {
     items: Array<{
@@ -16,6 +17,8 @@ type songProps = {
 }
 
 const SpotifyData = () => {
+
+    const [isHovered, hoverProps] = useHover();
 
     console.log("spotufy data component")
 
@@ -79,10 +82,12 @@ const SpotifyData = () => {
     }
 
     return (
-        <div> 
+        <div
+        {...hoverProps}
+        className={`${isHovered ? 'bg-red-500' : ''}`}>
             <div className="flex gap-4 border p-2">
                 <div>
-                    <img src = {songdata?.items[0].track.album.images[0].url} width="50" height="50"></img>
+                    <img src = {songdata?.items[0].track.album.images[0].url} width="150" height="150"></img>
                 </div>
                 <div>
                     <div>{songdata?.items[0].track.name}</div>

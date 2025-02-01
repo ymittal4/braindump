@@ -8,8 +8,7 @@ const HomePage = () => {
             <div> 
                 <AnimatedText />
             </div>
-            <br></br>
-            <div className="py-2 font-mono text-xs">/ CURRENTLY</div>
+            <div className="pt-10 pb-2 font-mono text-xs">/ CURRENTLY</div>
             <hr className="w-full border-[#E3E3E3]" />
             <br></br>
             <div>
