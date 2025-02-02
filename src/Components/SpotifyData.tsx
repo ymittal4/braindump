@@ -68,6 +68,11 @@ const SpotifyData = () => {
         }
     }
 
+    function imageOverlay() {
+        const image  = songdata?.items[0].track.album.images[0].url
+        
+    }
+
 
     //conditional renders
     if (loading) {
@@ -83,11 +88,18 @@ const SpotifyData = () => {
 
     return (
         <div
-        {...hoverProps}
+        // {...hoverProps}
         className={`${isHovered ? 'bg-red-500' : ''}`}>
             <div className="flex gap-4 border p-2">
-                <div>
+                <div className="relative">
                     <img src = {songdata?.items[0].track.album.images[0].url} width="150" height="150"></img>
+                    <div className="absolute inset-0 "> 
+                        <div className="h-full w-full grid grid-cols-4 "> 
+                            {Array(16).fill(null).map((_,index) => (
+                                <div key= {index} className="block bg-[#fd5530] opacity-0 hover:opacity-50" />
+                            ))}
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <div>{songdata?.items[0].track.name}</div>
