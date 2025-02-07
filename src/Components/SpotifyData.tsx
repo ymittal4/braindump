@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { data } from "react-router-dom";
 import useHover from "../hooks/hoverHook";
+import BlockAnimation from "../Animations/BlockAnimation";
 
 type songProps = {
     items: Array<{
@@ -18,16 +19,15 @@ type songProps = {
 
 const SpotifyData = () => {
 
-    const [isHovered, hoverProps] = useHover();
-
-    console.log("spotufy data component")
-
     //states
+    const [isHovered, hoverProps] = useHover();
     const [songdata, setSongdata] = useState<songProps | null>(null);
     const [loading, setLoading] = useState(true);
     const [noSong, setNosong] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
+    const imageBlocks = useRef<HTMLDivElement>(null); //useRef hook for blocks in album image
+    const [blockIsHovered, setHoverIndex] = useState<number | null>(null)
+    const [activeBlocks, setActiveBlocks] = useState<number[]>([])
 
     //runnning functions > getting data from API > setting states according to data
     useEffect(() => {
@@ -49,6 +49,10 @@ const SpotifyData = () => {
         fetchSongData()
         
     },[])
+
+    useEffect(() => {
+        console.log("activeBlocks changed to:", activeBlocks);
+    }, [activeBlocks]);
 
     function changeTimeToPST() {
 
@@ -73,7 +77,6 @@ const SpotifyData = () => {
         
     }
 
-
     //conditional renders
     if (loading) {
         return (
@@ -86,6 +89,7 @@ const SpotifyData = () => {
         </div>)
     }
 
+
     return (
         <div
         // {...hoverProps}
@@ -96,7 +100,17 @@ const SpotifyData = () => {
                     <div className="absolute inset-0 "> 
                         <div className="h-full w-full grid grid-cols-4 "> 
                             {Array(16).fill(null).map((_,index) => (
-                                <div key= {index} className="block bg-[#fd5530] opacity-0 hover:opacity-50" />
+                                <div 
+                                ref={imageBlocks} 
+                                key= {index} 
+                                onMouseEnter={() => {
+                                    console.log("Mouse entered block:", index);
+                                    setHoverIndex(index);
+                                    BlockAnimation(Array(16).fill(null).map((_,index) => index), blockIsHovered, setActiveBlocks)
+                                }}
+                                className={`block bg-[#fd5530] ${activeBlocks.includes(index) ? 'opacity-50' :'opacity-0'} duration-500 ease-in-out mix-blend-hard-light`}
+                                onMouseLeave={()=> setHoverIndex(null)}
+                                />                           
                             ))}
                         </div>
                     </div>
@@ -108,8 +122,6 @@ const SpotifyData = () => {
             </div>
             <div className="border p-2">
                 <div> Last played on {changeTimeToPST()} </div>
-
-                
             </div>
         </div>
     )
