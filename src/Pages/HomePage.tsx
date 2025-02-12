@@ -1,6 +1,7 @@
 import AnimatedText from "../Components/AnimatedText";
 import BookData from "../Components/BookData";
 import CurrentMedia from "../Components/CurrentMedia";
+import { TravelGrid } from "../Components/TravelGrid";
 
 const HomePage = () => {
     return (
@@ -16,7 +17,7 @@ const HomePage = () => {
             </div>
             <br></br>
             <div>
-                <BookData />
+                <TravelGrid />
             </div>
         </div>
        
