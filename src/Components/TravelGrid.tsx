@@ -6,6 +6,7 @@ type RSMFeature = Feature<Geometry, GeoJsonProperties> & {
     rsmKey: string;
 }
 
+const countriesVisited = ["India", "China", "Japan"]
 
 
 export const TravelGrid = () => {
@@ -21,14 +22,15 @@ export const TravelGrid = () => {
             <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json">
                 {({ geographies } : { geographies : RSMFeature[] }) =>
                     geographies.map((geo: RSMFeature) => {
-                        if (geo.properties && geo.properties.name === "India") {
+                        if (geo.properties && countriesVisited.includes(geo.properties.name)) {
                             console.log("Country", geo.properties);
                             return <Geography 
-                            key={geo.rsmKey} 
-                            geography={geo}
-                            fill="none"
-                            stroke="#000000"
-                            strokeWidth={2} />
+                                key={geo.rsmKey} 
+                                geography={geo}
+                                fill="none"
+                                stroke="#000000"
+                                strokeWidth={2} 
+                            />
                         }
                         return null
                     })
