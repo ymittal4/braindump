@@ -16,7 +16,7 @@ const HomePage = () => {
                 <CurrentMedia />
             </div>
             <br></br>
-            <div>
+            <div className="my-10">
                 <TravelGrid />
             </div>
         </div>
