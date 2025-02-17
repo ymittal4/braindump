@@ -35,7 +35,7 @@ const SpotifyData = () => {
             try {
                 const response = await fetch('http://localhost:3001/api/now-playing');
                 const data = await response.json();
-                console.log('track data is', data.items[0].track);
+                // console.log('track data is', data.items[0].track);
                 // console.log ('received data', data)
                 if (data) {setNosong(false);} //if valid data is returned
                 setSongdata(data);
@@ -92,7 +92,7 @@ const SpotifyData = () => {
 
     return (
         <div
-        // {...hoverProps}
+        {...hoverProps}
         className={`${isHovered ? 'bg-red-500' : ''}`}>
             <div className="flex gap-4 border p-2">
                 <div className="relative">

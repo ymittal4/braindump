@@ -1,6 +1,8 @@
 import { ComposableMap, Geographies, Geography, GeographyProps } from "react-simple-maps"
 import { Feature, Geometry, GeoJsonProperties } from 'geojson'
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import useHover from "../hooks/hoverHook"
+import AnimatedText from "./AnimatedText"
 
 
 type RSMFeature = Feature<Geometry, GeoJsonProperties> & {
@@ -25,97 +27,118 @@ const countryConfigs: countryConfigs = {
 }
 
 export const TravelGrid = () => {
+
+
+    const [currentCountry, setCountry] = useState <string | null>(null);
+    const [isHovered, hoverProps] = useHover({
+        onMouseEnterCallback: (isHovered, hoveredCountry) => {
+            setCountry(hoveredCountry ?? null)
+            console.log(`your mouse is in country, ${currentCountry}, hover state: ${isHovered}`)
+        },
+        onMouseLeaveCallback: (isHovered, hoveredCountry) => {
+            setCountry(null)
+            console.log(`your mouse left ${currentCountry}, hover state: ${isHovered}`)
+        } 
+    });
+
     return (
-    <div>
-        <div className="relative flex grid grid-cols-4">
-            {countriesVisited.map((country) => (
-                <ComposableMap
-                    projection="geoEqualEarth"
-                    projectionConfig={countryConfigs[country]}
-                >
-                    <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json">
-                    {({ geographies } : { geographies : RSMFeature[] }) =>
-                            geographies.map((geo: RSMFeature) => {
-                                if (geo.properties && country.includes(geo.properties.name)) {
-                                    console.log("Country", geo.properties);
-                                    return <Geography 
-                                        key={geo.rsmKey} 
-                                        geography={geo}
-                                        fill="#000000"
-                                        stroke="#000000"
-                                        strokeWidth={2} 
-                                    />
-                                }
-                                return null
-                            })
-                        }
-                    </Geographies>
-                </ComposableMap>
-            ))}
-            <div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-0 left-0 transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-0 left-[25%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-0 left-[50%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-0 left-[75%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-0 left-[100%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-[50%] left-0 transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-[50%] left-[25%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-[50%] left-[75%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-[50%] left-[100%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-[100%] left-0 transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-[100%] left-[25%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-[100%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-[100%] left-[75%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
-                </div>
-                <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                duration-200 text-gray-800 top-[100%] left-[100%] transform -translate-x-1/2 -translate-y-1/2">
-                    +
+        
+        <div className="map-container">
+            <div>"you're hovering over" {currentCountry}</div>
+            <div className="relative flex grid grid-cols-4">
+                {countriesVisited.map((country) => {
+                        return (
+                            <ComposableMap
+                                projection="geoEqualEarth"
+                                projectionConfig={countryConfigs[country]}
+                                {...hoverProps} 
+                                data-hoveredCountry = {country}
+                            >
+                                <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json">
+                                {({ geographies } : { geographies : RSMFeature[] }) =>
+                                        geographies.map((geo: RSMFeature) => {
+                                            if (geo.properties && country.includes(geo.properties.name)) {
+                                                // setCountry(geo.properties.name)
+                                                // console.log("hiver over", geo.properties.name)
+                                                return <Geography 
+                                                    key={geo.rsmKey} 
+                                                    geography={geo}
+                                                    fill="#000000"
+                                                    stroke="#000000"
+                                                    strokeWidth={2} 
+                                                />
+                                            }
+                                            return null
+                                        })
+                                    }
+                                </Geographies>
+                            </ComposableMap>
+                        );
+                    })}
+                   
+                    <div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-0 left-0 transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-0 left-[25%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-0 left-[50%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-0 left-[75%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-0 left-[100%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-[50%] left-0 transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-[50%] left-[25%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-[50%] left-[75%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-[50%] left-[100%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-[100%] left-0 transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-[100%] left-[25%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-[100%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-[100%] left-[75%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
+                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                    duration-200 text-gray-800 top-[100%] left-[100%] transform -translate-x-1/2 -translate-y-1/2">
+                        +
+                    </div>
                 </div>
             </div>
-            
         </div>
-    </div>
-)
-}
+);
+};
