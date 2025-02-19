@@ -3,6 +3,7 @@ import { Feature, Geometry, GeoJsonProperties } from 'geojson'
 import { useEffect, useState } from "react"
 import useHover from "../hooks/hoverHook"
 import AnimatedText from "./AnimatedText"
+import { hover } from "@testing-library/user-event/dist/hover"
 
 
 type RSMFeature = Feature<Geometry, GeoJsonProperties> & {
@@ -47,41 +48,40 @@ export const TravelGrid = () => {
             <div>"you're hovering over" {currentCountry}</div>
             <div className="relative grid grid-cols-4 h-[500px]">
                 {countriesVisited.map((country) => {
-                    if (isHovered && currentCountry === country) {
-                        console.log ("you just hovered over", {country})
                         return (
-                            <div className="flex items-center h-full justify-center" {...hoverProps} > {currentCountry} & {isHovered.toString()}</div>
-                        )
-                    } 
-                    else {
-                        console.log ("you just hovered over no country dweeb")
-                        return (
-                            <ComposableMap
-                                projection="geoEqualEarth"
-                                projectionConfig={countryConfigs[country]}
-                                {...hoverProps} 
-                                data-hoveredCountry = {country}
-                            >
-                                <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json">
-                                {({ geographies } : { geographies : RSMFeature[] }) =>
-                                        geographies.map((geo: RSMFeature) => {
-                                            if (geo.properties && country.includes(geo.properties.name)) {
-                                                    return <Geography 
-                                                    key={geo.rsmKey} 
-                                                    geography={geo}
-                                                    fill="#000000"
-                                                    stroke="#000000"
-                                                    strokeWidth={2} 
-                                                />
-                                            }
-                                            return null
-                                        })
-                                    }
-                                </Geographies>
-                            </ComposableMap>
+                            <div {...hoverProps} data-hoveredCountry = {country}> 
+                                <ComposableMap
+                                    style = {{ opacity : isHovered && currentCountry === country ? 0 : 1}}
+                                    projection="geoEqualEarth"
+                                    projectionConfig={countryConfigs[country]}
+                                    {...hoverProps} 
+                                    data-hoveredCountry = {country}
+                                >
+                                    <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json">
+                                    {({ geographies } : { geographies : RSMFeature[] }) =>
+                                            geographies.map((geo: RSMFeature) => {
+                                                if (geo.properties && country.includes(geo.properties.name)) {
+                                                        return <Geography 
+                                                        key={geo.rsmKey} 
+                                                        geography={geo}
+                                                        fill="#000000"
+                                                        stroke="#000000"
+                                                        strokeWidth={2} 
+                                                    />
+                                                }
+                                                return null
+                                            })
+                                        }
+                                    </Geographies>
+                                </ComposableMap>
+                                <div 
+                                style={{ opacity : isHovered && currentCountry === country ? 1 : 0}}
+                                // className="flex items-center h-full justify-center"
+                                > 
+                                    {country}
+                                </div>
+                            </div>
                         );
-                    }
-                    
                     })}
                     <div>
                     <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
