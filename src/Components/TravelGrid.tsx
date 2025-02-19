@@ -45,8 +45,16 @@ export const TravelGrid = () => {
         
         <div className="map-container">
             <div>"you're hovering over" {currentCountry}</div>
-            <div className="relative flex grid grid-cols-4">
+            <div className="relative grid grid-cols-4 h-[500px]">
                 {countriesVisited.map((country) => {
+                    if (isHovered && currentCountry === country) {
+                        console.log ("you just hovered over", {country})
+                        return (
+                            <div className="flex items-center h-full justify-center" {...hoverProps} > {currentCountry} & {isHovered.toString()}</div>
+                        )
+                    } 
+                    else {
+                        console.log ("you just hovered over no country dweeb")
                         return (
                             <ComposableMap
                                 projection="geoEqualEarth"
@@ -58,9 +66,7 @@ export const TravelGrid = () => {
                                 {({ geographies } : { geographies : RSMFeature[] }) =>
                                         geographies.map((geo: RSMFeature) => {
                                             if (geo.properties && country.includes(geo.properties.name)) {
-                                                // setCountry(geo.properties.name)
-                                                // console.log("hiver over", geo.properties.name)
-                                                return <Geography 
+                                                    return <Geography 
                                                     key={geo.rsmKey} 
                                                     geography={geo}
                                                     fill="#000000"
@@ -74,8 +80,9 @@ export const TravelGrid = () => {
                                 </Geographies>
                             </ComposableMap>
                         );
+                    }
+                    
                     })}
-                   
                     <div>
                     <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
                     duration-200 text-gray-800 top-0 left-0 transform -translate-x-1/2 -translate-y-1/2">
