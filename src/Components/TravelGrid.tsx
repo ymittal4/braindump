@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from "react"
 import useHover from "../hooks/hoverHook"
 import gsap from "gsap"
 import { TextPlugin } from "gsap/all"
-import { useScramble } from "use-scramble"
 gsap.registerPlugin(TextPlugin)
 
 type RSMFeature = Feature<Geometry, GeoJsonProperties> & {
@@ -73,7 +72,7 @@ export const TravelGrid = () => {
 
         if (previousCountry.current && previousCountry.current != currentCountry) {
             gsap.to(countryRefs[previousCountry.current].current, {
-                duration: 0.4,
+                duration: 0.6,
                 text:"_____",
                 ease: "none",
             });
@@ -81,7 +80,7 @@ export const TravelGrid = () => {
         
         if (currentCountry) {
             gsap.to(countryRefs[currentCountry].current, {
-                duration: 0.4,
+                duration: 0.6,
                 text: currentCountry,
                 ease: "none",
               });
@@ -95,9 +94,19 @@ export const TravelGrid = () => {
             <div className="relative grid grid-cols-4 h-[500px]">
                 {countriesVisited.map((country) => {
                         return (
-                            <div {...hoverProps} data-hoveredCountry = {country}> 
+                            <div data-hoveredCountry = {country} style={{
+                                height: '100%',
+                                position: 'relative',
+                                flex:'1',
+                                }}
+                                {...hoverProps} 
+                                > 
+                                
                                 <ComposableMap
-                                    style = {{ opacity : isHovered && currentCountry === country ? 0 : 1}}
+                                    style = {{ 
+                                        opacity : isHovered && currentCountry === country ? 0 : 1
+
+                                    }}
                                     projection="geoEqualEarth"
                                     projectionConfig={countryConfigs[country]}
                                     {...hoverProps} 
@@ -126,11 +135,9 @@ export const TravelGrid = () => {
                                         opacity : isHovered && currentCountry === country ? 1 : 0,
                                         fontWeight:'bold',
                                         fontSize:'2rem',
-                                        position:'relative',
-                                        top:'-35%',
-                                        left:'90%',
-                                        transform:'translate(-50%, -50%)'
+                                        zIndex:10
                                     }}
+                                    {...hoverProps} 
                                 > 
                                     { makeRandomString(country.length)}
                                 </div>
@@ -138,65 +145,65 @@ export const TravelGrid = () => {
                         );
                     })}
                     <div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-0 left-0 transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-0 left-[25%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-0 left-[50%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-0 left-[75%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-0 left-[100%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-[50%] left-0 transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-[50%] left-[25%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-[50%] left-[75%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-[50%] left-[100%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-[100%] left-0 transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-[100%] left-[25%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-[100%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-[100%] left-[75%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
-                    </div>
-                    <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
-                    duration-200 text-gray-800 top-[100%] left-[100%] transform -translate-x-1/2 -translate-y-1/2">
-                        +
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-0 left-0 transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-0 left-[25%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-0 left-[50%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-0 left-[75%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-0 left-[100%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-[50%] left-0 transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-[50%] left-[25%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-[50%] left-[75%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-[50%] left-[100%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-[100%] left-0 transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-[100%] left-[25%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-[100%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-[100%] left-[75%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
+                        </div>
+                        <div className="absolute w-3 h-3 flex items-center justify-center transition-colors 
+                        duration-200 text-gray-800 top-[100%] left-[100%] transform -translate-x-1/2 -translate-y-1/2">
+                            +
                     </div>
                 </div>
             </div>
