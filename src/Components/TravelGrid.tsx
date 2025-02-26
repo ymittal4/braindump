@@ -1,10 +1,10 @@
 import { ComposableMap, Geographies, Geography, GeographyProps } from "react-simple-maps"
 import { Feature, Geometry, GeoJsonProperties } from 'geojson'
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import useHover from "../hooks/hoverHook"
-import AnimatedText from "./AnimatedText"
-import { hover } from "@testing-library/user-event/dist/hover"
-
+import gsap from "gsap"
+import { TextPlugin } from "gsap/all"
+gsap.registerPlugin(TextPlugin)
 
 type RSMFeature = Feature<Geometry, GeoJsonProperties> & {
     rsmKey: string;
@@ -13,7 +13,7 @@ type RSMFeature = Feature<Geometry, GeoJsonProperties> & {
 type countryConfigs = {
     [key: string]: {
         center: [number, number];
-        scale: number;
+        scale: number;           
     }
 }
 
@@ -27,10 +27,12 @@ const countryConfigs: countryConfigs = {
     "Kenya": { center: [37.9062, 0.0236], scale: 1000 },
 }
 
+
 export const TravelGrid = () => {
-
-
+    // State to track which country is currently being hovered
     const [currentCountry, setCountry] = useState <string | null>(null);
+    
+    // Custom hook to handle hover interactions
     const [isHovered, hoverProps] = useHover({
         onMouseEnterCallback: (isHovered, hoveredCountry) => {
             setCountry(hoveredCountry ?? null)
@@ -41,6 +43,29 @@ export const TravelGrid = () => {
             console.log(`your mouse left ${currentCountry}, hover state: ${isHovered}`)
         } 
     });
+
+    // const ref = useRef<HTMLDivElement>(null)
+
+    const countryRefs: { [key:string] : React.RefObject<HTMLDivElement> } = {
+        "India" : useRef<HTMLDivElement>(null),
+        "China" : useRef<HTMLDivElement>(null),
+        "Japan" : useRef<HTMLDivElement>(null),
+        "Spain" : useRef<HTMLDivElement>(null),
+        "Kenya" : useRef<HTMLDivElement>(null),
+    }
+
+    useEffect(() => {
+        console.log('effect running with', {isHovered, currentCountry});
+        if (currentCountry) {
+            gsap.to(countryRefs[currentCountry].current, {
+                duration: 1,
+                text: currentCountry,
+                ease: "none",
+              });
+            }
+        },[currentCountry, isHovered]);
+    
+        
 
     return (
         
@@ -75,10 +100,11 @@ export const TravelGrid = () => {
                                     </Geographies>
                                 </ComposableMap>
                                 <div 
-                                style={{ opacity : isHovered && currentCountry === country ? 1 : 0}}
-                                // className="flex items-center h-full justify-center"
+                                    ref = {countryRefs[country]}
+                                    style={{ opacity : isHovered && currentCountry === country ? 1 : 0}}
                                 > 
-                                    {country}
+                                    {"_".repeat(5)}
+                                    {/* {country} */}
                                 </div>
                             </div>
                         );

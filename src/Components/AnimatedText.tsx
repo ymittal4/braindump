@@ -2,6 +2,8 @@ import gsap from "gsap";
 import { useRef, useState } from "react";
 import { TextPlugin } from "gsap/all";
 import { useEffect } from "react";
+
+// Register the GSAP TextPlugin for text animation capabilities
 gsap.registerPlugin(TextPlugin)
 
 
