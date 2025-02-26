@@ -1,10 +1,13 @@
 import { ComposableMap, Geographies, Geography, GeographyProps } from "react-simple-maps"
 import { Feature, Geometry, GeoJsonProperties } from 'geojson'
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useContext } from "react"
 import useHover from "../hooks/hoverHook"
 import gsap from "gsap"
 import { TextPlugin } from "gsap/all"
+import ThemeContext from "../context/ThemeContext";
+
 gsap.registerPlugin(TextPlugin)
+
 
 type RSMFeature = Feature<Geometry, GeoJsonProperties> & {
     rsmKey: string;
@@ -43,6 +46,9 @@ function makeRandomString(length:number) {
 export const TravelGrid = () => {
     // State to track which country is currently being hovered
     const [currentCountry, setCountry] = useState <string | null>(null);
+
+    //get the current theme 
+    const { isDark } = useContext(ThemeContext)
     
     // Custom hook to handle hover interactions
     const [isHovered, hoverProps] = useHover({
@@ -119,8 +125,8 @@ export const TravelGrid = () => {
                                                         return <Geography 
                                                         key={geo.rsmKey} 
                                                         geography={geo}
-                                                        fill="#000000"
-                                                        stroke="#000000"
+                                                        fill={isDark ? "#000000" : "#ffffff"}
+                                                        stroke={isDark ? "#000000" : "#ffffff"}
                                                         strokeWidth={2} 
                                                     />
                                                 }
