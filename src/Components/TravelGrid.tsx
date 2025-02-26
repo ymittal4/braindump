@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react"
 import useHover from "../hooks/hoverHook"
 import gsap from "gsap"
 import { TextPlugin } from "gsap/all"
+import { useScramble } from "use-scramble"
 gsap.registerPlugin(TextPlugin)
 
 type RSMFeature = Feature<Geometry, GeoJsonProperties> & {
@@ -25,6 +26,18 @@ const countryConfigs: countryConfigs = {
     "Japan": { center: [138, 38], scale: 1200 },
     "Spain": { center: [-3, 40], scale: 800 },
     "Kenya": { center: [37.9062, 0.0236], scale: 1000 },
+}
+
+function makeRandomString(length:number) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        counter += 1;
+      }
+      return result;
 }
 
 
@@ -52,16 +65,15 @@ export const TravelGrid = () => {
         "Kenya" : useRef<HTMLDivElement>(null),
     }
 
-    const previousCountry = useRef(currentCountry)
+    const previousCountry = useRef(currentCountry);
 
     useEffect(() => {
-        console.log('effect running with', {isHovered, currentCountry});
+        console.log('effect running with', isHovered, currentCountry);
         console.log ("previous country was", previousCountry)
 
         if (previousCountry.current && previousCountry.current != currentCountry) {
-            //reset text here
             gsap.to(countryRefs[previousCountry.current].current, {
-                duration: 1,
+                duration: 0.4,
                 text:"_____",
                 ease: "none",
             });
@@ -69,19 +81,17 @@ export const TravelGrid = () => {
         
         if (currentCountry) {
             gsap.to(countryRefs[currentCountry].current, {
-                duration: 1,
+                duration: 0.4,
                 text: currentCountry,
                 ease: "none",
               });
             }
         previousCountry.current = currentCountry
     },[currentCountry, isHovered]);
-    
         
     return (
         
         <div className="map-container">
-            <div>"you're hovering over" {currentCountry}</div>
             <div className="relative grid grid-cols-4 h-[500px]">
                 {countriesVisited.map((country) => {
                         return (
@@ -112,10 +122,17 @@ export const TravelGrid = () => {
                                 </ComposableMap>
                                 <div 
                                     ref = {countryRefs[country]}
-                                    style={{ opacity : isHovered && currentCountry === country ? 1 : 0}}
+                                    style={{ 
+                                        opacity : isHovered && currentCountry === country ? 1 : 0,
+                                        fontWeight:'bold',
+                                        fontSize:'2rem',
+                                        position:'relative',
+                                        top:'-35%',
+                                        left:'90%',
+                                        transform:'translate(-50%, -50%)'
+                                    }}
                                 > 
-                                    {"_".repeat(5)}
-                                    {/* {country} */}
+                                    { makeRandomString(country.length)}
                                 </div>
                             </div>
                         );
