@@ -36,15 +36,13 @@ export const TravelGrid = () => {
     const [isHovered, hoverProps] = useHover({
         onMouseEnterCallback: (isHovered, hoveredCountry) => {
             setCountry(hoveredCountry ?? null)
-            console.log(`your mouse is in country, ${currentCountry}, hover state: ${isHovered}`)
+            // console.log(`your mouse is in country, ${currentCountry}, hover state: ${isHovered}`)
         },
         onMouseLeaveCallback: (isHovered, hoveredCountry) => {
             setCountry(null)
-            console.log(`your mouse left ${currentCountry}, hover state: ${isHovered}`)
+            // console.log(`your mouse left ${currentCountry}, hover state: ${isHovered}`)
         } 
     });
-
-    // const ref = useRef<HTMLDivElement>(null)
 
     const countryRefs: { [key:string] : React.RefObject<HTMLDivElement> } = {
         "India" : useRef<HTMLDivElement>(null),
@@ -54,8 +52,21 @@ export const TravelGrid = () => {
         "Kenya" : useRef<HTMLDivElement>(null),
     }
 
+    const previousCountry = useRef(currentCountry)
+
     useEffect(() => {
         console.log('effect running with', {isHovered, currentCountry});
+        console.log ("previous country was", previousCountry)
+
+        if (previousCountry.current && previousCountry.current != currentCountry) {
+            //reset text here
+            gsap.to(countryRefs[previousCountry.current].current, {
+                duration: 1,
+                text:"_____",
+                ease: "none",
+            });
+        }
+        
         if (currentCountry) {
             gsap.to(countryRefs[currentCountry].current, {
                 duration: 1,
@@ -63,10 +74,10 @@ export const TravelGrid = () => {
                 ease: "none",
               });
             }
-        },[currentCountry, isHovered]);
+        previousCountry.current = currentCountry
+    },[currentCountry, isHovered]);
     
         
-
     return (
         
         <div className="map-container">
