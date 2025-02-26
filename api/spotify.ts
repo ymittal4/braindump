@@ -1,12 +1,17 @@
-import type { Request, Response } from 'web/request';
+export interface Request extends globalThis.Request {}
+export interface Response extends globalThis.Response {}
 
 export const config = {
     runtime: 'edge'
 };
 
-const clientId = process.env.clientId;
-const clientSecret = process.env.clientSecret;
-const redirect_uri = 'http://localhost:3000/api/callback';
+// Get environment variables from Vercel
+const clientId = process.env.clientId || '';
+const clientSecret = process.env.clientSecret || '';
+// For production, use the actual deployed URL
+const redirect_uri = process.env.VERCEL_URL 
+  ? `https://${process.env.VERCEL_URL}/api/callback` 
+  : 'http://localhost:3000/api/callback';
 
 export default async function handler(request: Request) {
     try {
@@ -19,10 +24,10 @@ export default async function handler(request: Request) {
         
         console.log('Redirecting to:', authUrl.toString());
         
-        return Response.redirect(authUrl.toString(), 302);
+        return globalThis.Response.redirect(authUrl.toString(), 302);
     } catch (error) {
         console.error('Error in spotify.ts:', error);
-        return new Response(
+        return new globalThis.Response(
             JSON.stringify({ error: 'Failed to create auth URL' }),
             { 
                 status: 500,

@@ -1,6 +1,7 @@
-const refreshToken = process.env.refreshToken
-const clientId = process.env.clientId
-const clientSecret = process.env.clientSecret
+// Get environment variables from Vercel
+const refreshToken = process.env.refreshToken || ''
+const clientId = process.env.clientId || ''
+const clientSecret = process.env.clientSecret || ''
 const code = undefined
 
 type SpotifyResponse = {
@@ -53,13 +54,19 @@ async function getCurrentSong(access_token:string): Promise<SpotifyResponse> {
     return await result.json();
 }
 
+export const config = {
+    runtime: 'edge'
+};
+
+export interface Request extends globalThis.Request {}
+
 export default async function handler(request: Request){
     console.log("=== Handler Started ===");
 
     //check to see if all variables exist to run handler function
     if (!clientId || !clientSecret || !refreshToken) {
         console.log("missing env vars:")
-        return new Response(
+        return new globalThis.Response(
             JSON.stringify({ error: 'missing environment variables'}),
             {
                 status: 500,
@@ -73,12 +80,12 @@ export default async function handler(request: Request){
         const access_token = await getAccessToken(clientId, clientSecret);
         const songData = await getCurrentSong(access_token);
 
-        return new Response(JSON.stringify(songData), {
+        return new globalThis.Response(JSON.stringify(songData), {
             status:200,
             headers: { 'Content-Type': 'application/json'}
         });
     } catch (error) {
-        return new Response(JSON.stringify(error), {
+        return new globalThis.Response(JSON.stringify(error), {
             status:500, 
             headers: { 'Content-Type': 'application/json'}
         })
