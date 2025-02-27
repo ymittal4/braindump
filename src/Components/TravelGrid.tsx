@@ -125,8 +125,7 @@ export const TravelGrid = () => {
                                                         return <Geography 
                                                         key={geo.rsmKey} 
                                                         geography={geo}
-                                                        fill={isDark ? "#000000" : "#ffffff"}
-                                                        stroke={isDark ? "#000000" : "#ffffff"}
+                                                        fill={isDark ? "#ffffff" : "#000000"}
                                                         strokeWidth={2} 
                                                     />
                                                 }
