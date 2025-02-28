@@ -13,13 +13,13 @@ const weatherCodes: {[key:number]:string} = {
     3: "Partly Cloudy",
     45: "Foggy",
     48: "Foggy",
-    61: "Rain",
-    63: "Rain",
-    65: "Rain",
-    71: "Snow",
-    73: "Snow",
-    75: "Snow",
-    80: "Rain"
+    61: "Rainy",
+    63: "Rainy",
+    65: "Rainy",
+    71: "Snowy",
+    73: "Snowy",
+    75: "Snowy",
+    80: "Rainy"
 }
 
 const Weather = () => {
@@ -69,12 +69,11 @@ const Weather = () => {
     
                 // `weatherData` now contains a simple structure with arrays for datetime and weather data
                 for (let i = 0; i < weatherData.daily.time.length; i++) {
-                    console.log(
-                        "pls work", 
+                    console.log( 
                         // weatherData.daily.time[i].toISOString(),
                         weatherData.daily.weatherCode[i],
                         setWeather(weatherCodes[weatherData.daily.weatherCode[i]]),
-                        console.log ('weather is', weather)
+                        console.log ('weather is', weatherData.daily.weatherCode[i])
                     );
                 }
             }
@@ -93,9 +92,14 @@ const Weather = () => {
         Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
 
         return (
-            <div className="border">
-                <div>
-                    SF weather: { weather }
+            <div className="border width-[150px]">
+                <div className='flex'>
+                    <div>
+                        { weather }
+                    </div>
+                    <div>
+                        San Francisco, USA
+                    </div>
                 </div>
                 Add weather component here
             </div>
