@@ -73,8 +73,8 @@ export const TravelGrid = () => {
     const previousCountry = useRef(currentCountry);
 
     useEffect(() => {
-        console.log('effect running with', isHovered, currentCountry);
-        console.log ("previous country was", previousCountry)
+        // console.log('effect running with', isHovered, currentCountry);
+        // console.log ("previous country was", previousCountry)
 
         if (previousCountry.current && previousCountry.current != currentCountry) {
             gsap.to(countryRefs[previousCountry.current].current, {

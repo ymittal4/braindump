@@ -2,7 +2,7 @@ import AnimatedText from "../Components/AnimatedText";
 import BookData from "../Components/BookData";
 import CurrentMedia from "../Components/CurrentMedia";
 import { TravelGrid } from "../Components/TravelGrid";
-import { Weather } from "../Components/Weather";
+import Weather from "../Components/Weather";
 
 
 const HomePage = () => {
