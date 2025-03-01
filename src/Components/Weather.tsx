@@ -1,5 +1,10 @@
 import { fetchWeatherApi } from 'openmeteo';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+
+mapboxgl.accessToken = process.env.REACT_APP_MAPBOX || '';
+
 	
 //setting up 
 type weatherResponse = {
@@ -34,6 +39,24 @@ const Weather = () => {
         "timezone": "America/Los_Angeles",
         "forecast_days": 1
     };
+
+    const mapContainerRef = useRef<HTMLDivElement>(null);
+    const mapRef = useRef<mapboxgl.Map | null>(null);
+
+    console.log("mapbox token isss", process.env.REACT_APP_MAPBOX)
+
+
+    useEffect(() => {        
+        if  (mapContainerRef.current != null) {
+            mapRef.current = new mapboxgl.Map ({
+                container: mapContainerRef.current,
+                style: 'mapbox://styles/mapbox/dark-v11',
+                center: [-122.4232, 37.7415],
+                zoom: 9
+            });
+            console.log("new map is", mapRef.current)
+        }
+    }, []);
     
     const url = "https://api.open-meteo.com/v1/forecast";
     
@@ -95,10 +118,17 @@ const Weather = () => {
             <div className="border width-[150px]">
                 <div className='flex'>
                     <div>
-                        { weather }
+                       weather is { weather }
                     </div>
                     <div>
                         San Francisco, USA
+                    </div>
+                    <div
+                        ref={mapContainerRef}
+                        style={{ 
+                            width:"500px",
+                            height:"500px"
+                        }}> 
                     </div>
                 </div>
                 Add weather component here
