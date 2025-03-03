@@ -1,15 +1,19 @@
 import AnimatedText from "../Components/AnimatedText";
-import BookData from "../Components/BookData";
 import CurrentMedia from "../Components/CurrentMedia";
 import { TravelGrid } from "../Components/TravelGrid";
 import Weather from "../Components/Weather";
+import WeatherContext from "../context/WeatherContext";
+import { useContext } from 'react';
 
 
 const HomePage = () => {
+
+    const { isHovered, setHovered } = useContext(WeatherContext)
+
     return (
         <div> 
-            <div>
-                <Weather />
+            <div className="flex justify-end w-4/5">
+                {isHovered ? <Weather className = "opacity-100"/>  : <Weather className = "opacity-0"/>}
             </div>
             <div> 
                 <AnimatedText />

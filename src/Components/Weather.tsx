@@ -2,8 +2,14 @@ import { fetchWeatherApi } from 'openmeteo';
 import { useEffect, useState, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { useContext } from 'react';
+import ThemeContext from "../context/ThemeContext";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX || '';
+
+type WeatherProps = {
+    className?: string
+}
 
 	
 //setting up 
@@ -27,10 +33,13 @@ const weatherCodes: {[key:number]:string} = {
     80: "Rainy"
 }
 
-const Weather = () => {
+const Weather = ( {className}: WeatherProps) => {
     const [ isLoading, setLoading ] = useState <boolean | null> (true)
     const [ errorMessage, setError ] = useState <string | null> (null)
     const [ weather, setWeather ] = useState<string | null>(null)
+    const [ isHovered, setHovered] = useState<boolean | null> (false)
+
+    const { isDark } = useContext(ThemeContext)
     
     const params = {
         "latitude": 52.52,
@@ -50,9 +59,10 @@ const Weather = () => {
         if  (mapContainerRef.current != null) {
             mapRef.current = new mapboxgl.Map ({
                 container: mapContainerRef.current,
-                style: 'mapbox://styles/mapbox/dark-v11',
+                style: 'mapbox://styles/mapbox/light-v11',
                 center: [-122.4232, 37.7415],
-                zoom: 9
+                zoom: 9,
+                interactive:false
             });
             console.log("new map is", mapRef.current)
         }
@@ -64,11 +74,7 @@ const Weather = () => {
         async function fetchWeatherData (){
             try {
                 const responses = await fetchWeatherApi(url, params);
-                console.log ("does responses? ", responses)
-                // Process first location. Add a for-loop for multiple locations or weather models
                 const response = responses[0];
-                console.log("first response is", response)
-                // Attributes for timezone and location
                 const utcOffsetSeconds = response.utcOffsetSeconds();
                 const timezone = response.timezone();
                 const timezoneAbbreviation = response.timezoneAbbreviation();
@@ -76,7 +82,6 @@ const Weather = () => {
                 const longitude = response.longitude();
     
                 const daily = response.daily()!;
-                console.log ("daily response is", daily)
     
                 // Note: The order of weather variables in the URL query and the indices below need to match!
                 const weatherData = {
@@ -87,8 +92,6 @@ const Weather = () => {
                         weatherCode: daily.variables(0)!.valuesArray()!,
                     },
                 };
-
-                console.log ("Weather data is", weatherData)
     
                 // `weatherData` now contains a simple structure with arrays for datetime and weather data
                 for (let i = 0; i < weatherData.daily.time.length; i++) {
@@ -115,23 +118,22 @@ const Weather = () => {
         Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
 
         return (
-            <div className="border width-[150px]">
-                <div className='flex'>
-                    <div>
-                       weather is { weather }
-                    </div>
-                    <div>
-                        San Francisco, USA
+            <div className={`${className} transition-opacity duration-300`}>
+                <div className={`w-1/4 h-auto border p-4 shadow-xl absolute ${isDark ? 'text-white bg-gray-900' : 'text:black bg-white'}`}>
+                    <div className='flex justify-between items-center mb-4 px-2 border border-gray-700'>
+                        <div className='font-semibold text-2xl opacity-75'>
+                            { weather }
+                        </div>
+                        <div className='m-2'>
+                            San Francisco
+                        </div>
                     </div>
                     <div
                         ref={mapContainerRef}
-                        style={{ 
-                            width:"500px",
-                            height:"500px"
-                        }}> 
+                        className='w-full h-40 border border-dashed border-border-gray-700'
+                    > 
                     </div>
                 </div>
-                Add weather component here
             </div>
         )
     }
