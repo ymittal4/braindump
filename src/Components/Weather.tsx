@@ -52,9 +52,6 @@ const Weather = ( {className}: WeatherProps) => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<mapboxgl.Map | null>(null);
 
-    console.log("mapbox token isss", process.env.REACT_APP_MAPBOX)
-
-
     useEffect(() => {        
         if  (mapContainerRef.current != null) {
             mapRef.current = new mapboxgl.Map ({
