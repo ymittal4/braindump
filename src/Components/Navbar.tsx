@@ -16,7 +16,7 @@ const Navbar = () => {
             <div className='flex gap-2'>
                 <Button text="blog" to="/blog" />
                 <ToggleButton />
-                <div className='opacity-50'
+                <div className='opacity-20 hover:opacity-100 transition-opacity duration-500'
                     onMouseEnter = {() => {setHovered(true)}}
                     onMouseLeave = {() => {setHovered(false)}}
                 >
