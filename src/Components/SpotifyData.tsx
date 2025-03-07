@@ -1,6 +1,8 @@
 // React core imports
 import { useEffect, useState, useRef } from "react";
 import { data } from "react-router-dom";
+import { supabase } from "../config/supabase";
+
 
 // Custom hooks and components
 import useHover from "../hooks/hoverHook";
@@ -70,17 +72,33 @@ const SpotifyData = () => {
             const songDay = dateObject.getDate()
             const songTime = dateObject.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour12: true, hour: 'numeric', minute: 'numeric' })
             const newDate = (songMonth + " " + songDay + "," + " " + songTime)
-            return  newDate
+            return  (newDate + " PST")
         }
         else {
             return null
         }
     }
 
-    function imageOverlay() {
-        const image  = songdata?.items[0].track.album.images[0].url
-        
+    async function insertSongData() {
+        const { data , error } = await supabase()
+            .from('SpotifySongHistory')
+            .insert([
+                { 
+                    song_name:songdata?.items[0].track.name, 
+                    created_at: songdata?.items[0].played_at, 
+                    song_artists: songdata?.items[0].track.artists[0].name
+                }
+            ]);
+        if (error) {
+            console.log ("error pushing data to supabase", error)
+        }
+        else {
+            console.log ("data inserted successfully", data)
+        }
     }
+
+    insertSongData()
+    
 
     // Loading and error state handling
     if (loading) {
