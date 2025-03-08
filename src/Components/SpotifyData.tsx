@@ -1,49 +1,42 @@
-// React core imports
 import { useEffect, useState, useRef } from "react";
 import { data } from "react-router-dom";
 import { supabase } from "../config/supabase";
 
 
-// Custom hooks and components
 import useHover from "../hooks/hoverHook";
 import BlockAnimation from "../Animations/BlockAnimation";
 
-// Type definition for Spotify track data structure
 type songProps = {
     items: Array<{
         track: {
-            name: string;                    // Name of the track
-            artists: Array<{ name: string }>; // List of artists
-            album: {images: Array<{          // Album artwork images
-                url: string,                 // Image URL
-                height: number,              // Image height
-                width: number                // Image width
+            name: string;                    
+            artists: Array<{ name: string }>;
+            album: {images: Array<{          
+                url: string,                 
+                height: number,              
+                width: number                
             }>}
         };
-        played_at: string;  // Timestamp when the track was played
+        played_at: string;  
     }>;
 }
 
 const SpotifyData = () => {
-    // State management
-    const [isHovered, hoverProps] = useHover();                           // Track hover state
-    const [songdata, setSongdata] = useState<songProps | null>(null);      // Store Spotify track data
-    const [loading, setLoading] = useState(true);                         // Loading state
-    const [noSong, setNosong] = useState(true);                          // Track if no song is playing
-    const [error, setError] = useState<string | null>(null);             // Error handling
-    const imageBlocks = useRef<HTMLDivElement>(null);                    // Reference to album art grid blocks
-    const [blockIsHovered, setHoverIndex] = useState<number | null>(null) // Track hovered block in grid
-    const [activeBlocks, setActiveBlocks] = useState<number[]>([])       // Track animated blocks
+    const [isHovered, hoverProps] = useHover();                           
+    const [songdata, setSongdata] = useState<songProps | null>(null);      
+    const [loading, setLoading] = useState(true);                        
+    const [noSong, setNosong] = useState(true);                          
+    const [error, setError] = useState<string | null>(null);             
+    const imageBlocks = useRef<HTMLDivElement>(null);                    
+    const [blockIsHovered, setHoverIndex] = useState<number | null>(null) 
+    const [activeBlocks, setActiveBlocks] = useState<number[]>([])       
 
-    // Fetch current playing track data from Spotify API when component mounts
     useEffect(() => {
         async function fetchSongData() {
             try {
                 const response = await fetch('http://localhost:3001/api/now-playing');
                 const data = await response.json();
-                // console.log('track data is', data.items[0].track);
-                // console.log ('received data', data)
-                if (data) {setNosong(false);} //if valid data is returned
+                if (data) {setNosong(false);}
                 setSongdata(data);
             } catch(error) {
                 console.error('error fetching api data', error);
@@ -60,9 +53,7 @@ const SpotifyData = () => {
         console.log("activeBlocks changed to:", activeBlocks);
     }, [activeBlocks]);
 
-    // Convert UTC timestamp to PST and format it nicely
     function changeTimeToPST() {
-        // Month names for date formatting
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
         if (songdata) {
@@ -82,25 +73,45 @@ const SpotifyData = () => {
     async function insertSongData() {
         const { data , error } = await supabase()
             .from('SpotifySongHistory')
-            .insert([
-                { 
-                    song_name:songdata?.items[0].track.name, 
-                    created_at: songdata?.items[0].played_at, 
-                    song_artists: songdata?.items[0].track.artists[0].name
+            // .delete()
+            // .match({})
+            .select('song_name' )
+            .eq("song_name",songdata?.items[0].track.name)
+
+            console.log('data is ', data)
+            console.log("matching array length is", data?.length)
+
+            if (data && data?.length > 0) {
+                console.log("song data exists in db")
+            } else {
+                console.log("this is a new song", songdata?.items[0].track.name)
+                const { data, error } = await supabase()
+                    .from('SpotifySongHistory')
+                    .insert([
+                        {
+                            song_name:songdata?.items[0].track.name, 
+                            created_at: songdata?.items[0].played_at, 
+                            song_artists: songdata?.items[0].track.artists[0].name,
+                            album_cover: songdata?.items[0].track.album.images[0].url
+                        }
+                    ])
+
+                    if (error) {
+                        console.log ("error pushing data to supabase", error)
+                    }
+                    else {
+                        console.log ("data inserted successfully", songdata?.items[0].track.name)
+                    }
                 }
-            ]);
-        if (error) {
-            console.log ("error pushing data to supabase", error)
-        }
-        else {
-            console.log ("data inserted successfully", data)
-        }
     }
 
-    insertSongData()
+
+    useEffect(() => {
+        insertSongData();
+    }, []);
+
     
 
-    // Loading and error state handling
     if (loading) {
         return (
             <div>loading song</div>

@@ -94,9 +94,9 @@ const Weather = ( {className}: WeatherProps) => {
                 for (let i = 0; i < weatherData.daily.time.length; i++) {
                     console.log( 
                         // weatherData.daily.time[i].toISOString(),
-                        weatherData.daily.weatherCode[i],
-                        setWeather(weatherCodes[weatherData.daily.weatherCode[i]]),
-                        console.log ('weather is', weatherData.daily.weatherCode[i])
+                        // weatherData.daily.weatherCode[i],
+                        // setWeather(weatherCodes[weatherData.daily.weatherCode[i]]),
+                        // console.log ('weather is', weatherData.daily.weatherCode[i])
                     );
                 }
             }
