@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { data } from "react-router-dom";
 import { supabase } from "../config/supabase";
+import Button from "./Button";
+import { Link } from "react-router-dom";
 
 
 import useHover from "../hooks/hoverHook";
@@ -77,18 +79,12 @@ const SpotifyData = () => {
             .select('song_name')
             .eq("song_name", songdata?.items[0].track.name)
 
-        console.log(data, error, "bbbb")
-
         const songNameSearching = songdata?.items[0].track.name
 
         console.log("i am looking for song", songNameSearching)
         const { data: allSongs, error: allSongsError } = await supabase
             .from('SpotifySongHistory')
             .select('*')
-
-        console.log ("we are evaluating", songdata?.items[0].track.name)
-        console.log('data is ', data)
-        console.log("matching array length is", data?.length)
 
         if (data && data?.length > 0) {
             console.log("song data exists in db")
@@ -114,10 +110,15 @@ const SpotifyData = () => {
             }
     }
 
+    async function deleteSongData() {
+        const {data, error} = await supabase 
+            .from('SpotifySongHistory')
+            .delete()
+            .gt('id', 0)
+    }
 
     useEffect(() => {
         if (songdata && songdata.items && songdata.items.length > 0) {
-            console.log("we are evaulatong", songdata?.items[0].track.name)
             insertSongData();
         }
         else {
@@ -140,8 +141,8 @@ const SpotifyData = () => {
     return (
         <div
         {...hoverProps}
-        className={`${isHovered ? 'bg-red-500' : ''}`}>
-            <div className="flex gap-4 border p-2">
+        className={`${isHovered ? 'bg-red-500 bg-opacity-20 transition-bg-opacity duration-150' : ''}`}>
+            <div className="flex gap-4 border-t border-r border-l p-2">
                 <div className="relative">
                     <img src = {songdata?.items[0].track.album.images[0].url} width="150" height="150"></img>
                     <div className="absolute inset-0 "> 
@@ -167,8 +168,9 @@ const SpotifyData = () => {
                     <div>{songdata?.items[0].track.artists[0].name}</div>
                 </div>
             </div>
-            <div className="border p-2">
+            <div className="border-l border-r border-b p-2">
                 <div> Last played on {changeTimeToPST()} </div>
+                <Link to="/SongHistory" className="text-sm opacity-30 hover:opacity-80 transition-opacity duration-500">View song history</Link>
             </div>
         </div>
     )

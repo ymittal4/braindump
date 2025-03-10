@@ -92,11 +92,14 @@ const Weather = ( {className}: WeatherProps) => {
     
                 // `weatherData` now contains a simple structure with arrays for datetime and weather data
                 for (let i = 0; i < weatherData.daily.time.length; i++) {
+
+                    setWeather(weatherCodes[weatherData.daily.weatherCode[i]])
+
                     console.log( 
-                        // weatherData.daily.time[i].toISOString(),
-                        // weatherData.daily.weatherCode[i],
-                        // setWeather(weatherCodes[weatherData.daily.weatherCode[i]]),
-                        // console.log ('weather is', weatherData.daily.weatherCode[i])
+                        weatherData.daily.time[i].toISOString(),
+                        weatherData.daily.weatherCode[i],
+
+                        console.log ('weather is', weatherData.daily.weatherCode[i])
                     );
                 }
             }
