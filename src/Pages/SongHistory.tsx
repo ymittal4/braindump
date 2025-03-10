@@ -2,8 +2,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "../config/supabase"
 
 const SongHistory = () => {
-
-    const[isSong, setSong] = useState<{ 
+    const[songData, setSongData] = useState<{ 
         song_name:string, 
         created_at:number, 
         song_artists:string,
@@ -16,7 +15,7 @@ const SongHistory = () => {
             .select('song_name, created_at, song_artists, album_cover')
 
             if (data) {
-                setSong(data)             
+                setSongData(data)             
             }
     }
 
@@ -28,7 +27,7 @@ const SongHistory = () => {
     return (
        
         <div>
-            <p>{isSong && isSong.map((currentSongs) => {
+            <p>{songData && songData.map((currentSongs) => {
                 return (
                     <div>
                         <div>{currentSongs.song_name}</div>
