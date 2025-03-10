@@ -61,7 +61,7 @@ const Weather = ( {className}: WeatherProps) => {
                 zoom: 9,
                 interactive:false
             });
-            console.log("new map is", mapRef.current)
+            // console.log("new map is", mapRef.current)
         }
     }, []);
     

@@ -36,6 +36,7 @@ const SpotifyData = () => {
             try {
                 const response = await fetch('http://localhost:3001/api/now-playing');
                 const data = await response.json();
+                // console.log("new data is", data)
                 if (data) {setNosong(false);}
                 setSongdata(data);
             } catch(error) {
@@ -44,14 +45,11 @@ const SpotifyData = () => {
                 setLoading(false)
             }
         }
-    
-        fetchSongData()
-        
+        fetchSongData()        
     },[])
 
-    useEffect(() => {
-        console.log("activeBlocks changed to:", activeBlocks);
-    }, [activeBlocks]);
+
+    useEffect(() => {}, [activeBlocks]);
 
     function changeTimeToPST() {
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -71,46 +69,61 @@ const SpotifyData = () => {
     }
 
     async function insertSongData() {
-        const { data , error } = await supabase()
+        const { data, error } = await supabase
             .from('SpotifySongHistory')
+            // .select('*')
             // .delete()
-            // .match({})
-            .select('song_name' )
-            .eq("song_name",songdata?.items[0].track.name)
+            // .gt('id', 0)
+            .select('song_name')
+            .eq("song_name", songdata?.items[0].track.name)
 
-            console.log('data is ', data)
-            console.log("matching array length is", data?.length)
+        console.log(data, error, "bbbb")
 
-            if (data && data?.length > 0) {
-                console.log("song data exists in db")
-            } else {
-                console.log("this is a new song", songdata?.items[0].track.name)
-                const { data, error } = await supabase()
-                    .from('SpotifySongHistory')
-                    .insert([
-                        {
-                            song_name:songdata?.items[0].track.name, 
-                            created_at: songdata?.items[0].played_at, 
-                            song_artists: songdata?.items[0].track.artists[0].name,
-                            album_cover: songdata?.items[0].track.album.images[0].url
-                        }
-                    ])
+        const songNameSearching = songdata?.items[0].track.name
 
-                    if (error) {
-                        console.log ("error pushing data to supabase", error)
+        console.log("i am looking for song", songNameSearching)
+        const { data: allSongs, error: allSongsError } = await supabase
+            .from('SpotifySongHistory')
+            .select('*')
+
+        console.log ("we are evaluating", songdata?.items[0].track.name)
+        console.log('data is ', data)
+        console.log("matching array length is", data?.length)
+
+        if (data && data?.length > 0) {
+            console.log("song data exists in db")
+        } else {
+            console.log("this is a new song", songdata?.items[0].track.name)
+            const { data, error } = await supabase
+                .from('SpotifySongHistory')
+                .insert([
+                    {
+                        song_name:songdata?.items[0].track.name, 
+                        created_at: songdata?.items[0].played_at, 
+                        song_artists: songdata?.items[0].track.artists[0].name,
+                        album_cover: songdata?.items[0].track.album.images[0].url
                     }
-                    else {
-                        console.log ("data inserted successfully", songdata?.items[0].track.name)
-                    }
+                ])
+
+                if (error) {
+                    console.log ("error pushing data to supabase", error)
                 }
+                else {
+                    console.log ("data inserted successfully", songdata?.items[0].track.name)
+                }
+            }
     }
 
 
     useEffect(() => {
-        insertSongData();
-    }, []);
-
-    
+        if (songdata && songdata.items && songdata.items.length > 0) {
+            console.log("we are evaulatong", songdata?.items[0].track.name)
+            insertSongData();
+        }
+        else {
+            console.log("song still loading")
+        }
+    }, [songdata?.items[0].track.name]);
 
     if (loading) {
         return (
