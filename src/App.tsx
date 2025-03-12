@@ -5,7 +5,7 @@ import BlogPage from './Pages/BlogPage'
 import HomePage from './Pages/HomePage';
 import ThemeContext from './context/ThemeContext';
 import WeatherContext from './context/WeatherContext';
-import SongHistory from './Pages/SongHistory';
+import SongPage from './Pages/SongPage';
 
 function App() {
 
@@ -27,7 +27,7 @@ function App() {
                       <Route path='/' element={<HomePage />} />
                       <Route path='/home' element={<HomePage />} />
                       <Route path='/blog' element={<BlogPage />} />
-                      <Route path='/SongHistory' element={<SongHistory />} />
+                      <Route path='/SongPage' element={<SongPage />} />
                     </Routes>
                 </div>
               </div>

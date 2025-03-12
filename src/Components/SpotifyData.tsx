@@ -170,7 +170,7 @@ const SpotifyData = () => {
             </div>
             <div className="border-l border-r border-b p-2">
                 <div> Last played on {changeTimeToPST()} </div>
-                <Link to="/SongHistory" className="text-sm opacity-30 hover:opacity-80 transition-opacity duration-500">View song history</Link>
+                <Link to="/SongPage" className="text-sm opacity-30 hover:opacity-80 transition-opacity duration-500">View song history</Link>
             </div>
         </div>
     )
