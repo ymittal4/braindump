@@ -20,11 +20,15 @@ const ToggleButton = () => {
                     onChange={handleClick}
                     checked={isDark} 
                 />
-                <span className="absolute cursor-pointer inset-0 bg-stone-400 rounded-full 
+                <span className={`absolute cursor-pointer inset-0 rounded-full 
                     transition-all duration-300
                     before:content-[''] before:absolute before:h-5 before:w-5 before:left-[2px] before:bottom-[2px]
                     before:bg-white before:rounded-full before:transition-all before:duration-300 
-                    peer-checked:bg-blue-500 peer-checked:before:translate-x-5">
+                    peer-checked:before:translate-x-5 ${
+                        isDark 
+                            ? 'bg-stone-400 peer-checked:bg-green-400' 
+                            : 'bg-stone-400 peer-checked:bg-purple-500'
+                    }`}>
                 </span>
             </label>
             {/* <span className="text-sm">{isDark ? '🌙' : '☀️'}</span> */}
