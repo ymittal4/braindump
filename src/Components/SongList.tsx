@@ -1,31 +1,16 @@
-import { useEffect, useState } from "react"
-import { supabase } from "../config/supabase";
+interface SongListProps {
+    songData: {
+        song_name: string;
+        created_at: string;
+        song_artists: string;
+        album_cover: string;
+    }[] | undefined;
+}
 
-const SongList = () => {
-    const[songData, setSongData] = useState<{ 
-        song_name:string, 
-        created_at:string, 
-        song_artists:string,
-        album_cover:string
-    }[]>();
-
-    async function showSpotifyData() {
-        const { data, error } = await supabase
-            .from('SpotifySongHistory')
-            .select('song_name, created_at, song_artists, album_cover')
-
-            if (data) {
-                setSongData(data)             
-            }
-    }
-
+const SongList = ({ songData }: SongListProps) => {
     function getRandomInt(min:number, max:number) {
         return Math.floor(Math.random() * (max - min) + min);
       }
-
-    useEffect(() => {
-        showSpotifyData()
-    },[])
 
     function convertDateToPST(timeStamp:string) {
         const date = new Date(timeStamp)
