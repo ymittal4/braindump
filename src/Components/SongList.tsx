@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
-import { supabase } from "../config/supabase"
-import { random } from "gsap";
+import { supabase } from "../config/supabase";
 
 const SongList = () => {
     const[songData, setSongData] = useState<{ 

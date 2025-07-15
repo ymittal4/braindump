@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import { data } from "react-router-dom";
 import { supabase } from "../config/supabase";
 import Button from "./Button";
 import { Link } from "react-router-dom";
