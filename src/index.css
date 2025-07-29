@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-dark text-white font-sf-mono;
+  @apply antialiased;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',

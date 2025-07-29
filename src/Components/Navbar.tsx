@@ -1,3 +1,5 @@
+'use client'
+
 import { useContext } from 'react';
 import Button from './Button';
 import ToggleButton from './ToggleButton';
@@ -10,7 +12,7 @@ const Navbar = () => {
     return (
         <div className='flex justify-between pt-8 pb-8'> 
             <div className='flex gap-2'>
-                <Button text="HOME" to="/home" />
+                <Button text="HOME" to="/" />
                 <Button text="ME" to="/" />
             </div>
             <div className='flex gap-2'>
@@ -29,4 +31,4 @@ const Navbar = () => {
     )
 }
 
-export default Navbar
+export default Navbar;

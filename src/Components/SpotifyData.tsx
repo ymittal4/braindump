@@ -1,175 +1,208 @@
-import { useEffect, useState, useRef } from "react";
+'use client'
+
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { supabase } from "../config/supabase";
-import Button from "./Button";
-import { Link } from "react-router-dom";
-
-
+import Link from "next/link";
 import useHover from "../hooks/hoverHook";
 import BlockAnimation from "../Animations/BlockAnimation";
 
-type songProps = {
-    items: Array<{
-        track: {
-            name: string;                    
-            artists: Array<{ name: string }>;
-            album: {images: Array<{          
-                url: string,                 
-                height: number,              
-                width: number                
-            }>}
-        };
-        played_at: string;  
-    }>;
+interface SpotifyTrack {
+    name: string;
+    artists: Array<{ name: string }>;
+    album: {
+        images: Array<{
+            url: string;
+            height: number;
+            width: number;
+        }>;
+    };
+}
+
+interface SpotifyItem {
+    track: SpotifyTrack;
+    played_at: string;
+}
+
+interface SpotifyData {
+    items: SpotifyItem[];
 }
 
 const SpotifyData = () => {
-    const [isHovered, hoverProps] = useHover();                           
-    const [songdata, setSongdata] = useState<songProps | null>(null);      
-    const [loading, setLoading] = useState(true);                        
-    const [noSong, setNosong] = useState(true);                          
-    const [error, setError] = useState<string | null>(null);             
-    const imageBlocks = useRef<HTMLDivElement>(null);                    
-    const [blockIsHovered, setHoverIndex] = useState<number | null>(null) 
-    const [activeBlocks, setActiveBlocks] = useState<number[]>([])       
+    const [isHovered, hoverProps] = useHover();
+    const [spotifyData, setSpotifyData] = useState<SpotifyData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const imageBlocks = useRef<HTMLDivElement>(null);
+    const [blockIsHovered, setHoverIndex] = useState<number | null>(null);
+    const [activeBlocks, setActiveBlocks] = useState<number[]>([]);
+
+    const fetchSpotifyData = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await fetch('/api/now-playing');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            setSpotifyData(data);
+        } catch (fetchError) {
+            console.error('Error fetching Spotify data:', fetchError);
+            setError(fetchError instanceof Error ? fetchError.message : 'Failed to fetch data');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
-        async function fetchSongData() {
-            try {
-                const response = await fetch('http://localhost:3001/api/now-playing');
-                const data = await response.json();
-                // console.log("new data is", data)
-                if (data) {setNosong(false);}
-                setSongdata(data);
-            } catch(error) {
-                console.error('error fetching api data', error);
-            } finally {
-                setLoading(false)
-            }
+        fetchSpotifyData();
+    }, [fetchSpotifyData]);
+
+
+
+    const formatPlayedAtTime = useMemo(() => {
+        if (!spotifyData?.items?.[0]?.played_at) {
+            return null;
         }
-        fetchSongData()        
-    },[])
 
+        const playedAt = new Date(spotifyData.items[0].played_at);
+        const options: Intl.DateTimeFormatOptions = {
+            timeZone: 'America/Los_Angeles',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        };
+        
+        return playedAt.toLocaleDateString('en-US', options) + ' PST';
+    }, [spotifyData?.items?.[0]?.played_at]);
 
-    useEffect(() => {}, [activeBlocks]);
-
-    function changeTimeToPST() {
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
-        if (songdata) {
-            const currentDate = songdata?.items[0].played_at;
-            const dateObject = new Date(currentDate)
-            const songMonth = monthNames[dateObject.getMonth()]
-            const songDay = dateObject.getDate()
-            const songTime = dateObject.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour12: true, hour: 'numeric', minute: 'numeric' })
-            const newDate = (songMonth + " " + songDay + "," + " " + songTime)
-            return  (newDate + " PST")
-        }
-        else {
-            return null
-        }
-    }
-
-    async function insertSongData() {
-        const { data, error } = await supabase
-            .from('SpotifySongHistory')
-            // .select('*')
-            // .delete()
-            // .gt('id', 0)
-            .select('song_name')
-            .eq("song_name", songdata?.items[0].track.name)
-
-        const songNameSearching = songdata?.items[0].track.name
-
-        console.log("i am looking for song", songNameSearching)
-        const { data: allSongs, error: allSongsError } = await supabase
-            .from('SpotifySongHistory')
-            .select('*')
-
-        if (data && data?.length > 0) {
-            console.log("song data exists in db")
-        } else {
-            console.log("this is a new song", songdata?.items[0].track.name)
-            const { data, error } = await supabase
+    const insertSongData = useCallback(async (currentTrack: SpotifyItem) => {
+        try {
+            const songName = currentTrack.track.name;
+            
+            const { data: existingSongs, error: checkError } = await supabase
                 .from('SpotifySongHistory')
-                .insert([
-                    {
-                        song_name:songdata?.items[0].track.name, 
-                        created_at: songdata?.items[0].played_at, 
-                        song_artists: songdata?.items[0].track.artists[0].name,
-                        album_cover: songdata?.items[0].track.album.images[0].url
-                    }
-                ])
+                .select('song_name')
+                .eq('song_name', songName);
 
-                if (error) {
-                    console.log ("error pushing data to supabase", error)
-                }
-                else {
-                    console.log ("data inserted successfully", songdata?.items[0].track.name)
+            if (checkError) {
+                console.error('Error checking existing song:', checkError);
+                return;
+            }
+
+            if (!existingSongs || existingSongs.length === 0) {
+                const { error: insertError } = await supabase
+                    .from('SpotifySongHistory')
+                    .insert({
+                        song_name: songName,
+                        created_at: currentTrack.played_at,
+                        song_artists: currentTrack.track.artists[0]?.name,
+                        album_cover: currentTrack.track.album.images[0]?.url
+                    });
+
+                if (insertError) {
+                    console.error('Error inserting song data:', insertError);
+                } else {
+                    console.log('Song inserted successfully:', songName);
                 }
             }
-    }
+        } catch (error) {
+            console.error('Error in insertSongData:', error);
+        }
+    }, []);
 
-    async function deleteSongData() {
-        const {data, error} = await supabase 
-            .from('SpotifySongHistory')
-            .delete()
-            .gt('id', 0)
-    }
 
     useEffect(() => {
-        if (songdata && songdata.items && songdata.items.length > 0) {
-            insertSongData();
+        if (spotifyData?.items?.[0]) {
+            insertSongData(spotifyData.items[0]);
         }
-        else {
-            console.log("song still loading")
-        }
-    }, [songdata?.items[0].track.name]);
+    }, [spotifyData?.items?.[0]?.track?.name, insertSongData]);
 
     if (loading) {
         return (
-            <div>loading song</div>
-        )
-    }
-    if (noSong) {
-        return (<div>
-            there is no song
-        </div>)
+            <div className="flex items-center justify-center p-8">
+                <div className="text-lg">Loading current song...</div>
+            </div>
+        );
     }
 
+    if (error) {
+        return (
+            <div className="flex items-center justify-center p-8">
+                <div className="text-red-500">Error loading song data: {error}</div>
+            </div>
+        );
+    }
+
+    if (!spotifyData?.items?.length) {
+        return (
+            <div className="flex items-center justify-center p-8">
+                <div className="text-gray-500">No recent songs found</div>
+            </div>
+        );
+    }
+
+
+    const currentTrack = spotifyData.items[0];
 
     return (
         <div
-        {...hoverProps}
-        className={`${isHovered ? 'bg-red-500 bg-opacity-20 transition-bg-opacity duration-150' : ''}`}>
+            {...hoverProps}
+            className={`${isHovered ? 'bg-red-500 bg-opacity-20 transition-all duration-150' : ''}`}
+        >
             <div className="flex gap-4 border-t border-r border-l p-2">
                 <div className="relative">
-                    <img src = {songdata?.items[0].track.album.images[0].url} width="150" height="150"></img>
-                    <div className="absolute inset-0 "> 
-                        <div className="h-full w-full grid grid-cols-4 "> 
-                            {Array(16).fill(null).map((_,index) => (
+                    <img 
+                        src={currentTrack.track.album.images[0]?.url} 
+                        alt={`${currentTrack.track.name} album cover`}
+                        width="150" 
+                        height="150"
+                        className="rounded"
+                    />
+                    <div className="absolute inset-0"> 
+                        <div className="h-full w-full grid grid-cols-4"> 
+                            {Array.from({ length: 16 }, (_, index) => (
                                 <div 
-                                ref={imageBlocks} 
-                                key= {index} 
-                                onMouseEnter={() => {
-                                    console.log("Mouse entered block:", index);
-                                    setHoverIndex(index);
-                                    BlockAnimation(Array(16).fill(null).map((_,index) => index), blockIsHovered, setActiveBlocks)
-                                }}
-                                className={`block bg-[#fd5530] ${activeBlocks.includes(index) ? 'opacity-50' :'opacity-0'} duration-500 ease-in-out mix-blend-hard-light`}
-                                onMouseLeave={()=> setHoverIndex(null)}
+                                    ref={imageBlocks} 
+                                    key={index} 
+                                    onMouseEnter={() => {
+                                        setHoverIndex(index);
+                                        BlockAnimation(
+                                            Array.from({ length: 16 }, (_, i) => i), 
+                                            blockIsHovered, 
+                                            setActiveBlocks
+                                        );
+                                    }}
+                                    onMouseLeave={() => setHoverIndex(null)}
+                                    className={`
+                                        block bg-[#fd5530] mix-blend-hard-light
+                                        transition-opacity duration-500 ease-in-out
+                                        ${activeBlocks.includes(index) ? 'opacity-50' : 'opacity-0'}
+                                    `}
                                 />                           
                             ))}
                         </div>
                     </div>
                 </div>
-                <div>
-                    <div>{songdata?.items[0].track.name}</div>
-                    <div>{songdata?.items[0].track.artists[0].name}</div>
+                <div className="flex flex-col justify-center">
+                    <h3 className="font-semibold text-lg">{currentTrack.track.name}</h3>
+                    <p className="text-gray-600">{currentTrack.track.artists[0]?.name}</p>
                 </div>
             </div>
             <div className="border-l border-r border-b p-2">
-                <div> Last played on {changeTimeToPST()} </div>
-                <Link to="/SongPage" className="text-sm opacity-30 hover:opacity-80 transition-opacity duration-500">View song history</Link>
+                <div className="text-sm text-gray-500">
+                    Last played on {formatPlayedAtTime}
+                </div>
+                <Link 
+                    href="/SongPage" 
+                    className="text-sm opacity-30 hover:opacity-80 transition-opacity duration-500"
+                >
+                    View song history
+                </Link>
             </div>
         </div>
     )
