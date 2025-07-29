@@ -47,7 +47,7 @@ const FilterButton = ({ isAlphabetical, toggleSorting }: FilterButtonProps) => {
             {/* Text content with proper z-index to appear above shine effect */}
             <span className="relative z-10">
                 {/* Conditional text and icons based on current sorting mode */}
-                {isAlphabetical ? '📅 Sort by Date Added' : '🔤 Sort Alphabetically'}
+                {isAlphabetical ? 'Sort by Date Added' : 'Sort Alphabetically'}
             </span>
         </button>
     )

@@ -848,9 +848,6 @@ video {
 .border {
   border-width: 1px;
 }
-.border-2 {
-  border-width: 2px;
-}
 .border-4 {
   border-width: 4px;
 }
@@ -868,10 +865,6 @@ video {
 }
 .border-dashed {
   border-style: dashed;
-}
-.border-\[\#E3E3E3\] {
-  --tw-border-opacity: 1;
-  border-color: rgb(227 227 227 / var(--tw-border-opacity, 1));
 }
 .border-gray-300 {
   --tw-border-opacity: 1;
@@ -984,10 +977,6 @@ video {
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-}
-.px-8 {
-  padding-left: 2rem;
-  padding-right: 2rem;
 }
 .py-1 {
   padding-top: 0.25rem;

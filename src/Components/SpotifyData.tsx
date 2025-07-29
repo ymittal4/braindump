@@ -40,6 +40,7 @@ const SpotifyData = () => {
         try {
             setLoading(true);
             setError(null);
+            console.log('Fetching Spotify data...');
             const response = await fetch('/api/now-playing');
             
             if (!response.ok) {
@@ -47,6 +48,7 @@ const SpotifyData = () => {
             }
             
             const data = await response.json();
+            console.log('Spotify data received:', data);
             setSpotifyData(data);
         } catch (fetchError) {
             console.error('Error fetching Spotify data:', fetchError);
@@ -139,6 +141,7 @@ const SpotifyData = () => {
     }
 
     if (!spotifyData?.items?.length) {
+        console.log('No items found in spotifyData:', spotifyData);
         return (
             <div className="flex items-center justify-center p-8">
                 <div className="text-gray-500">No recent songs found</div>

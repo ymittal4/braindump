@@ -9,6 +9,13 @@ type SpotifyResponse = {
             name: string;
             artists: Array<{ name: string }>;
             duration_ms: number;
+            album: {
+                images: Array<{
+                    url: string;
+                    height: number;
+                    width: number;
+                }>;
+            };
         };
         played_at: string;  // When the track was played
     }>;
@@ -62,14 +69,15 @@ export async function GET() {
         const data: SpotifyResponse = await response.json();
         
         if (data.items && data.items.length > 0) {
-            const track = data.items[0].track;
+            // Return the data in the format expected by SpotifyData component
             return Response.json({
-                name: track.name,
-                artists: track.artists.map(artist => artist.name).join(', '),
-                played_at: data.items[0].played_at
+                items: data.items
             });
         } else {
-            return Response.json({ message: 'No recently played tracks found' });
+            return Response.json({ 
+                items: [],
+                message: 'No recently played tracks found' 
+            });
         }
     } catch (error) {
         console.error('Error fetching now playing:', error);

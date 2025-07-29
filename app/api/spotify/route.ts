@@ -1,6 +1,4 @@
-export const config = {
-    runtime: 'edge'
-};
+export const runtime = 'edge';
 
 // Get environment variables from Vercel
 const clientId = process.env.clientId || '';
